@@ -1,29 +1,58 @@
-<h1>Listing users</h1>
+<!DOCTYPE html>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script> 
+<script src="http://d23cj0cdvyoxg0.cloudfront.net/xivelyjs-1.0.4.min.js"></script>  
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+<script>
 
-  <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></td>
-        <td><%= user.email %></td>
-        <td><%= link_to 'Show', user %></td>
-        <td><%= link_to 'Edit', edit_user_path(user) %></td>
-        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+// Make sure the document is ready to be handled  
+$(document).ready(function($) {  
+  
+  // Set the Xively API key (https://xively.com/users/YOUR_USERNAME/keys)
+  //var key = "JhxKaGOzgOozj0LqDVReCJWyPU8Vg3xEgK9aDYRt3YJyKc9n"; //API key
+  //xively.setKey("B6mEkGwf5YFgyZ9GJXOUWzFE2Yx4fewxOuZxPSJmRgyC7szH");
+  xively.setKey("JhxKaGOzgOozj0LqDVReCJWyPU8Vg3xEgK9aDYRt3YJyKc9n"); 
+  
+  // Replace with your own values  
+  //var feedID        = 705754061;          // Feed ID  
+  var feedID        = 909656253;
+  var datastreamID  = "LivePulse";       // Datastream ID  
+  var selector      = "#myelement";   // Your element on the page  
+  // Get datastream data from Xively  
+  xively.datastream.get (feedID, datastreamID, function ( datastream ) {  
 
-<br>
+    // WARNING: This code is only executed when we get a response back from Xively,   
+    // it will likely execute after the rest your script  
+    //  
+    // NOTE: The variable "datastream" will contain all the Datastream information   
+    // as an object. The structure of Datastream objects can be found at:   
+    // https://xively.com/dev/docs/api/quick_reference/api_resource_attributes/#datastream  
+  
+    
+    // Display the current value from the datastream  
+    
+    
+    $(selector).html( datastream["current_value"] );
+    document.write(datastream["current_value"]);
+    document.write("");
+    document.write("<br>");
+    document.write(datastream["at"]);
+    document.write("<br>");
+    datastream = "{{datastream}}";
 
-<%= link_to 'New User', new_user_path %>
+    // Getting realtime!   
+    // The function associated with the subscribe method will be executed   
+    // every time there is an update to the datastream  
+    xively.datastream.subscribe( feedID, datastreamID, function ( event , datastream_updated ) {  
+      // Display the current value from the updated datastream  
+      $(selector).html( datastream_updated["current_value"] );
+      
+      document.write(datastream_updated["current_value"]);
+    });  
+  });
+  
+  // WARNING: Code here will continue executing while we get the datastream data from Xively,   
+  // use the function associated with datastream.get to work with the data   
+  // once the request is complete  
+});  
+
+</script>  
